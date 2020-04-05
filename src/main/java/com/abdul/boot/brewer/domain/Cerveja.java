@@ -11,6 +11,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
@@ -43,7 +45,7 @@ public class Cerveja {
 	private String descricao;
 
 	@NotNull (message = "O valor é obrigatório")
-	@DecimalMin("0.50")
+	@DecimalMin(value = "0.50", message = "O valor da cerveja deve ser maior ou igual a 0.50 MZN")
 	@DecimalMax(value = "9999999.99", message = "O valor da cerveja deve ser no máximo 999.999.99 MZN")
 	@NumberFormat(style = Style.CURRENCY, pattern = "#,##0.00")
 	private BigDecimal valor;
@@ -77,6 +79,12 @@ public class Cerveja {
 	@ManyToOne
 	@JoinColumn(name = "codigo_estilo")
 	private Estilo estilo;
+	
+	@PrePersist
+	@PreUpdate
+	private void prePersistUpdate() {
+		sku = sku.toUpperCase();
+	}
 	
 	
 	public String getSku() {
